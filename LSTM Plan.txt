@@ -1,0 +1,22 @@
+LSTM PLAN 
+We need a plan for building the LSTM. First, a couple PRO TIPS with LSTM’s:
+
+Tensor Format:
+
+Predictors (X) must be a 3D Array with dimensions: [samples, timesteps, features]: The first dimension is the length of values, the second is the number of time steps (lags), and the third is the number of predictors (1 if univariate or n if multivariate)
+Outcomes/Targets (y) must be a 2D Array with dimensions: [samples, timesteps]: The first dimension is the length of values and the second is the number of time steps (lags)
+Training/Testing:
+
+The training and testing length must be evenly divisible (e.g. training length / testing length must be a whole number)
+Batch Size:
+
+The batch size is the number of training examples in one forward/backward pass of a RNN before a weight update
+The batch size must be evenly divisible into both the training an testing lengths (e.g. training length / batch size and testing length / batch size must both be whole numbers)
+Time Steps:
+
+A time step is the number of lags included in the training/testing set
+For our example, our we use a single lag
+Epochs:
+
+The epochs are the total number of forward/backward pass iterations
+Typically more improves model performance unless overfitting occurs at which time the validation accuracy/loss will not improve
