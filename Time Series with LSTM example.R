@@ -50,7 +50,7 @@ View(sun_spots)
 
 p1 <- sun_spots %>%
   ggplot(aes(index, value)) +
-  geom_point(color = palette_light()[[1]], alpha = 0.5) +
+  geom_line(color = palette_light()[[1]], alpha = 0.5) +
   theme_tq() +
   labs(
     title = "From 1749 to 2013 (Full Data Set)"
@@ -60,7 +60,7 @@ p2 <- sun_spots %>%
   filter_time("start" ~ "1800") %>%
   ggplot(aes(index, value)) +
   geom_line(color = palette_light()[[1]], alpha = 0.5) +
-  geom_point(color = palette_light()[[1]]) +
+  geom_point(color = palette_light()[[1]],size=0.4) +
   geom_smooth(method = "loess", span = 0.2, se = FALSE) +
   theme_tq() +
   labs(
@@ -84,8 +84,9 @@ plot_grid(p_title, p1, p2, ncol = 1, rel_heights = c(0.1, 1, 1))
 # the purpose of this example is to make 10 year batch forecasting.
 # to use LSTM, we need ACF > 10 years
 
-# i don't really understand this.. perhaps I should play with this more
-#
+# This function just extracts acf for many more value indeces than what 
+# the normal acf function will return.  Its just a fancy way to look at 
+# auto correlation.  I should steal this for other work. :)
 
 tidy_acf <- function(data, value, lags = 0:20) {
   
@@ -119,9 +120,9 @@ sun_spots %>%
   tidy_acf(value, lags = 0:max_lag) %>%
   ggplot(aes(lag, acf)) +
   geom_segment(aes(xend = lag, yend = 0), color = palette_light()[[1]]) +
-  geom_vline(xintercept = 120, size = 3, color = palette_light()[[2]]) +
+  geom_vline(xintercept = 120, size = 1, color = palette_light()[[2]]) +
   annotate("text", label = "10 Year Mark", x = 130, y = 0.8, 
-           color = palette_light()[[2]], size = 6, hjust = 0) +
+           color = palette_light()[[2]], size = 4, hjust = 0) +
   theme_tq() +
   labs(title = "ACF: Sunspots")
 
@@ -172,7 +173,6 @@ rolling_origin_resamples <- rolling_origin(
 )
 
 rolling_origin_resamples
-
 
 # Plotting function for a single split
 plot_split <- function(split, expand_y_axis = TRUE, alpha = 1, size = 1, base_size = 14) {
@@ -803,7 +803,6 @@ predict_keras_lstm_future <- function(data, epochs = 300, ...) {
 }
 
 future_sun_spots_tbl <- predict_keras_lstm_future(sun_spots, epochs = 300)
-
 
 future_sun_spots_tbl %>%
   filter_time("1900" ~ "end") %>%
